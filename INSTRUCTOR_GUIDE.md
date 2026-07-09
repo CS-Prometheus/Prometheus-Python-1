@@ -1,0 +1,66 @@
+# Instructor Guide (not shown to students)
+
+## 1. Push this repo to GitHub
+
+```bash
+git init
+git add .
+git commit -m "Initial exercise template"
+git branch -M main
+git remote add origin https://github.com/<your-org-or-username>/python1-exercises.git
+git push -u origin main
+```
+
+## 2. Mark it as a Template Repository
+
+On the repo's GitHub page: **Settings -> General -> Template repository**
+(check the box).
+
+## 3. Create a GitHub Classroom assignment
+
+1. Go to https://classroom.github.com and create/select your classroom.
+2. **New Assignment** -> "Individual assignment".
+3. Under "Add a template repository," pick this repo.
+4. Under "Add autograding tests" you can optionally set up autograding
+   through Classroom's UI, OR just rely on the `.github/workflows/classroom.yml`
+   workflow already included — it runs `python run_tests.py` on every push
+   and shows up as a green/red check on each student's repo and in the
+   Classroom roster.
+5. Get the invite link and share it with students. Each student who clicks
+   it gets their own private repo cloned from this template.
+
+## 4. Tracking progress
+
+- The Classroom "Assignments" page shows each student's repo, last commit
+  time, and (if you set up autograding) a pass/fail score per exercise.
+- You can also bulk-clone every student repo at once using the
+  [GitHub Classroom CLI](https://github.com/github/gh-classroom) if you
+  want to inspect code locally:
+
+  ```bash
+  gh classroom clone student-repos
+  ```
+
+## 5. Adding real exercises from the PowerPoint
+
+Exercises are organized by lesson: `exercises/lesson_01/` through
+`exercises/lesson_10/`, one folder per class session. Add a new lesson by
+creating a `lesson_NN/` folder, then add one exercise folder inside it for
+each exercise (classwork, homework, etc.):
+
+```
+exercises/lesson_02/exercise_01_loops_classwork/
+    README.md          <- instructions for students
+    exercise.py         <- starter code with TODOs, functions return None/pass
+    test_exercise.py     <- test cases (pytest asserts)
+```
+
+To add exercises to an existing lesson, copy an existing exercise folder as
+a template within that lesson's folder and rename it.
+
+Naming convention:
+- Lesson folders: `lesson_NN` (e.g. `lesson_02`) — `run_tests.py` formats
+  this automatically into a readable label (e.g. "Lesson 02").
+- Exercise folders: `exercise_NN_short_description` (e.g.
+  `exercise_01_loops_classwork`) — formatted into a label like
+  "Exercise 01 - Loops Classwork".
