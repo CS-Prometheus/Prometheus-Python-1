@@ -26,10 +26,4 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run all exercise tests
-        run: |
-          status=0
-          for dir in exercises/*/; do
-            echo "Running tests in $dir"
-            pytest "$dir" --tb=short -q || status=1
-          done
-          exit $status
+        run: python run_tests.py
