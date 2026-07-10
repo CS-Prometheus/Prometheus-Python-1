@@ -1,3 +1,9 @@
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(__file__))
+sys.modules.pop("exercise", None)
+
 from exercise import (
     log_entry,
     read_numbered_entries,
