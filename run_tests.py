@@ -15,15 +15,14 @@ from pathlib import Path
 
 EXERCISES_DIR = Path(__file__).parent / "exercises"
 
-# Matches pytest's short summary line, e.g.:
-#   "3 passed in 0.02s"
-#   "2 passed, 1 failed in 0.03s"
-#   "1 failed, 2 errors in 0.01s"
-SUMMARY_RE = re.compile(
-    r"(?:(?P<passed>\d+) passed)?"
-    r"(?:, )?(?:(?P<failed>\d+) failed)?"
-    r"(?:, )?(?:(?P<errors>\d+) error)?"
-)
+# pytest does NOT guarantee an order in its summary line -- when a run has both
+# failures and passes it prints the failures FIRST, e.g. "2 failed, 3 passed".
+# So match each category independently rather than as one fixed passed->failed
+# ->errors sequence (the old single-regex approach silently reported passed=0
+# whenever any test failed).
+PASSED_RE = re.compile(r"(\d+) passed")
+FAILED_RE = re.compile(r"(\d+) failed")
+ERRORS_RE = re.compile(r"(\d+) error")
 
 
 def pretty_lesson(folder_name: str) -> str:
@@ -70,11 +69,17 @@ def run_one(exercise_dir: Path):
 
     passed = failed = errors = 0
     for line in output.splitlines():
-        match = SUMMARY_RE.search(line)
-        if match and any(match.groups()):
-            passed = int(match.group("passed") or 0)
-            failed = int(match.group("failed") or 0)
-            errors = int(match.group("errors") or 0)
+        # Only the pytest summary line ends with "in <seconds>s"; ignore
+        # traceback/detail lines that might otherwise contain these words.
+        if not re.search(r"in [\d.]+s\s*$", line):
+            continue
+        p = PASSED_RE.search(line)
+        f = FAILED_RE.search(line)
+        e = ERRORS_RE.search(line)
+        if p or f or e:
+            passed = int(p.group(1)) if p else 0
+            failed = int(f.group(1)) if f else 0
+            errors = int(e.group(1)) if e else 0
 
     total = passed + failed + errors
     ok = result.returncode == 0
